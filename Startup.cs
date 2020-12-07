@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AspNetCoreDILearning.Configurations;
 using AspNetCoreDILearning.Data;
 using AspNetCoreDILearning.Domain.ApprovalRules;
 using AspNetCoreDILearning.Services.Interfaces;
@@ -33,6 +34,9 @@ namespace AspNetCoreDILearning
             services.AddSingleton<ICardApprovalRule, CityDwellerApprovalRule>();
             services.AddSingleton<ICardApprovalRule, RecommendationApprovalRule>();
             services.AddScoped<DummyDataProvider>();
+
+            //  Custom configuration serialization
+            services.Configure<BaseRuleConfiguration>(Configuration.GetSection(BaseRuleConfiguration.BaseRule));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

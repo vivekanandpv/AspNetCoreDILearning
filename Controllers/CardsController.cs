@@ -4,8 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AspNetCoreDILearning.Configurations;
 using AspNetCoreDILearning.Data;
 using AspNetCoreDILearning.Services.Interfaces;
+using Microsoft.Extensions.Options;
 
 namespace AspNetCoreDILearning.Controllers
 {
@@ -15,11 +17,13 @@ namespace AspNetCoreDILearning.Controllers
     {
         private readonly IEnumerable<ICardApprovalRule> _rules;
         private readonly DummyDataProvider _dataProvider;
+        private readonly BaseRuleConfiguration _baseRule;
 
-        public CardsController(IEnumerable<ICardApprovalRule> rules, DummyDataProvider dataProvider)
+        public CardsController(IEnumerable<ICardApprovalRule> rules, DummyDataProvider dataProvider, IOptions<BaseRuleConfiguration> options)
         {
             _rules = rules;
             _dataProvider = dataProvider;
+            _baseRule = options.Value;
         }
 
         [HttpGet("{id:int}")]
@@ -33,7 +37,7 @@ namespace AspNetCoreDILearning.Controllers
             }
 
             var ruleViolations = _rules
-                .Where(r => !r.Approve(customer))
+                .Where(r => !r.Approve(customer, _baseRule))
                 .Select(r => r.RuleName)
                 .ToList();
 
