@@ -14,6 +14,7 @@ using AspNetCoreDILearning.Data;
 using AspNetCoreDILearning.Domain.ApprovalRules;
 using AspNetCoreDILearning.Services.Implementations;
 using AspNetCoreDILearning.Services.Interfaces;
+using AspNetCoreDILearning.Utils;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace AspNetCoreDILearning
@@ -30,27 +31,11 @@ namespace AspNetCoreDILearning
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
-
-            services.TryAddEnumerable(new []
-            {
-                ServiceDescriptor.Singleton<ICardApprovalRule, CreditScoreApprovalRule>(),
-                ServiceDescriptor.Singleton<ICardApprovalRule, CityDwellerApprovalRule>(),
-                ServiceDescriptor.Singleton<ICardApprovalRule, RecommendationApprovalRule>(),
-
-            });
-
-            //  Register the base service used for multiple interfaces
-            services.AddSingleton<GuidAndIdProvider>();
-
-            //  Use the container to dynamically provide the already registered singleton
-            services.AddSingleton<IGuidProvider>(container => container.GetRequiredService<GuidAndIdProvider>());
-            services.AddSingleton<IIntIdProvider>(container => container.GetRequiredService<GuidAndIdProvider>());
-
-            services.AddScoped<DummyDataProvider>();
-
-            //  Custom configuration serialization
-            services.Configure<BaseRuleConfiguration>(Configuration.GetSection(BaseRuleConfiguration.BaseRule));
+            services.AddApiControllers()
+                .AddConfiguration(Configuration)
+                .AddDummyDataProvider()
+                .AddBusinessRules()
+                .AddGuidAndIdProviders();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
