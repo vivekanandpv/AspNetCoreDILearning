@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using AspNetCoreDILearning.Configurations;
 using AspNetCoreDILearning.Data;
 using AspNetCoreDILearning.Domain.ApprovalRules;
+using AspNetCoreDILearning.Services.Implementations;
 using AspNetCoreDILearning.Services.Interfaces;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -38,6 +39,13 @@ namespace AspNetCoreDILearning
                 ServiceDescriptor.Singleton<ICardApprovalRule, RecommendationApprovalRule>(),
 
             });
+
+            //  Register the base service used for multiple interfaces
+            services.AddSingleton<GuidAndIdProvider>();
+
+            //  Use the container to dynamically provide the already registered singleton
+            services.AddSingleton<IGuidProvider>(container => container.GetRequiredService<GuidAndIdProvider>());
+            services.AddSingleton<IIntIdProvider>(container => container.GetRequiredService<GuidAndIdProvider>());
 
             services.AddScoped<DummyDataProvider>();
 
