@@ -30,9 +30,15 @@ namespace AspNetCoreDILearning
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddSingleton<ICardApprovalRule, CreditScoreApprovalRule>();
-            services.AddSingleton<ICardApprovalRule, CityDwellerApprovalRule>();
-            services.AddSingleton<ICardApprovalRule, RecommendationApprovalRule>();
+
+            services.TryAddEnumerable(new []
+            {
+                ServiceDescriptor.Singleton<ICardApprovalRule, CreditScoreApprovalRule>(),
+                ServiceDescriptor.Singleton<ICardApprovalRule, CityDwellerApprovalRule>(),
+                ServiceDescriptor.Singleton<ICardApprovalRule, RecommendationApprovalRule>(),
+
+            });
+
             services.AddScoped<DummyDataProvider>();
 
             //  Custom configuration serialization
